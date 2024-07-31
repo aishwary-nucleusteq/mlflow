@@ -55,6 +55,8 @@ export class ExperimentListView extends Component<Props, State> {
     this.list = ref;
   };
 
+  componentDidMount(): void {}
+
   componentDidUpdate = () => {
     // Ensure the filter is applied
     if (this.list) {
@@ -64,10 +66,16 @@ export class ExperimentListView extends Component<Props, State> {
 
   filterExperiments = (searchInput: any) => {
     const { experiments } = this.props;
+    var workspaceName: any = '';
+    if ('workspaceName' in localStorage) {
+      workspaceName = '[' + localStorage.getItem('workspaceName') + ']';
+    }
     const lowerCasedSearchInput = searchInput.toLowerCase();
     return lowerCasedSearchInput === ''
-      ? this.props.experiments
-      : experiments.filter(({ name }) => name.toLowerCase().includes(lowerCasedSearchInput));
+      ? experiments.filter(({ name }) => name.toLowerCase().includes(workspaceName.toLowerCase().trim()))
+      : experiments
+          .filter(({ name }) => name.toLowerCase().includes(workspaceName.toLowerCase().trim()))
+          .filter(({ name }) => name.toLowerCase().includes(lowerCasedSearchInput));
   };
 
   handleSearchInputChange = (event: any) => {
@@ -182,6 +190,8 @@ export class ExperimentListView extends Component<Props, State> {
               onChange={(isChecked) => this.handleCheck(isChecked, item.experimentId)}
               isChecked={isActive}
               data-testid={`${dataTestId}-check-box`}
+              // className="experiment-Checkbox"
+              style={{ color: 'red' }}
             ></Checkbox>,
             <Link
               className="experiment-link"
@@ -195,7 +205,10 @@ export class ExperimentListView extends Component<Props, State> {
             <IconButton
               icon={<PencilIcon />}
               // @ts-expect-error TS(2322): Type '{ icon: Element; onClick: () => void; "data-... Remove this comment to see the full error message
-              onClick={this.handleRenameExperiment(item.experimentId, item.name)}
+              // onClick={this.handleRenameExperiment(item.experimentId, item.name)}
+              onClick={() => {
+                window.parent.postMessage({ type: 'CHANGE_ROUTE', payload: item.tags }, '*');
+              }}
               data-testid="rename-experiment-button"
               css={classNames.renameExperiment}
             />,
@@ -263,6 +276,15 @@ export class ExperimentListView extends Component<Props, State> {
           </Typography.Title>
           <div>
             <PlusCircleIcon
+              // onClick={this.handleCreateExperiment}
+              onClick={() => {
+                window.parent.postMessage({ type: 'CREATE_EXPERIMENT', payload: 'create_new_experiment' }, '*');
+              }}
+              css={classNames.icon(theme)}
+              title="New Experiment"
+              data-testid="create-experiment-button"
+            />
+            {/* <PlusCircleIcon
               onClick={this.handleCreateExperiment}
               css={classNames.icon(theme)}
               title="New Experiment"
@@ -273,7 +295,7 @@ export class ExperimentListView extends Component<Props, State> {
               rotate={90}
               css={classNames.icon(theme)}
               title="Hide experiment list"
-            />
+            /> */}
           </div>
         </div>
         <Input
