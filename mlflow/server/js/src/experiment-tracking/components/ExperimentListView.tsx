@@ -71,6 +71,7 @@ export class ExperimentListView extends Component<Props, State> {
       workspaceName = '[' + localStorage.getItem('workspaceName') + ']';
     }
     const lowerCasedSearchInput = searchInput.toLowerCase();
+
     return lowerCasedSearchInput === ''
       ? experiments.filter(({ name }) => name.toLowerCase().includes(workspaceName.toLowerCase().trim()))
       : experiments
@@ -212,13 +213,13 @@ export class ExperimentListView extends Component<Props, State> {
               data-testid="rename-experiment-button"
               css={classNames.renameExperiment}
             />,
-            <IconButton
-              icon={<i className="far fa-trash-o" />}
-              // @ts-expect-error TS(2322): Type '{ icon: Element; onClick: () => void; css: {... Remove this comment to see the full error message
-              onClick={this.handleDeleteExperiment(item.experimentId, item.name)}
-              css={classNames.deleteExperiment}
-              data-testid="delete-experiment-button"
-            />,
+            // <IconButton
+            //   icon={<i className="far fa-trash-o" />}
+            //   // @ts-expect-error TS(2322): Type '{ icon: Element; onClick: () => void; css: {... Remove this comment to see the full error message
+            //   onClick={this.handleDeleteExperiment(item.experimentId, item.name)}
+            //   css={classNames.deleteExperiment}
+            //   data-testid="delete-experiment-button"
+            // />,
           ]}
         ></List.Item>
       </div>
